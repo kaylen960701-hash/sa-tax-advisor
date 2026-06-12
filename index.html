@@ -3,536 +3,783 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SA Tax Advisor 2026/27</title>
+<title>Financial Intelligence Hub</title>
 <style>
+/* ═══════════════════════════════════════
+   SHARED TOKENS
+═══════════════════════════════════════ */
 :root {
-  --navy: #0B1F3A;
-  --navy-mid: #122540;
-  --navy-light: #1A3354;
-  --gold: #C9A84C;
-  --gold-light: #E8C97A;
-  --gold-dim: rgba(201,168,76,0.12);
-  --slate: #7A8FA8;
-  --text: #E0E8F0;
-  --text-dim: #7A8FA8;
-  --border: rgba(201,168,76,0.15);
-  --border-strong: rgba(201,168,76,0.3);
-  --bubble-ai: #142B46;
-  --bubble-user: #0F2E1A;
-  --success: #2EA86A;
-  --warn: #E8A020;
-  --radius: 14px;
+  /* Layout */
+  --radius: 12px;
   --radius-sm: 8px;
+
+  /* DM palette */
+  --dm-black:  #080C10;
+  --dm-dark:   #0D1117;
+  --dm-card:   #111820;
+  --dm-card2:  #161E28;
+  --dm-green:  #00D26A;
+  --dm-green-dim: rgba(0,210,106,0.10);
+  --dm-green-b:   rgba(0,210,106,0.20);
+  --dm-red:    #FF4757;
+  --dm-red-dim:rgba(255,71,87,0.10);
+  --dm-red-b:  rgba(255,71,87,0.20);
+  --dm-amber:  #FFA502;
+  --dm-amber-dim:rgba(255,165,2,0.10);
+  --dm-blue:   #1E90FF;
+  --dm-blue-dim:rgba(30,144,255,0.10);
+  --dm-text:   #E8EEF4;
+  --dm-mid:    #9AAAB8;
+  --dm-dim:    #6B7E94;
+  --dm-border: rgba(255,255,255,0.07);
+  --dm-border2:rgba(255,255,255,0.12);
+
+  /* TAX palette */
+  --tx-navy:      #0B1F3A;
+  --tx-mid:       #122540;
+  --tx-light:     #1A3354;
+  --tx-gold:      #C9A84C;
+  --tx-gold-l:    #E8C97A;
+  --tx-gold-dim:  rgba(201,168,76,0.12);
+  --tx-gold-b:    rgba(201,168,76,0.15);
+  --tx-gold-b2:   rgba(201,168,76,0.30);
+  --tx-slate:     #7A8FA8;
+  --tx-text:      #E0E8F0;
+  --tx-dim:       #7A8FA8;
+  --tx-border:    rgba(201,168,76,0.15);
+  --tx-border2:   rgba(201,168,76,0.30);
+  --tx-ai:        #142B46;
+  --tx-user:      #0F2E1A;
+  --tx-success:   #2EA86A;
+  --tx-warn:      #E8A020;
 }
+
+/* ═══ RESET & BASE ═══ */
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Georgia',serif; background:var(--navy); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+body { font-family:'Arial',sans-serif; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
 
-/* HEADER */
-header { background:var(--navy-mid); border-bottom:1px solid var(--border); padding:12px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
-.logo-mark { width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:var(--navy);font-family:'Arial',sans-serif;letter-spacing:-0.5px;flex-shrink:0; }
-.header-text h1 { font-size:15px;font-weight:normal;color:var(--gold-light);letter-spacing:.03em; }
-.header-text p  { font-size:10px;color:var(--slate);font-family:'Arial',sans-serif;margin-top:1px; }
-.header-right { margin-left:auto;display:flex;align-items:center;gap:8px; }
-.key-status { font-size:11px;font-family:'Arial',sans-serif;padding:4px 10px;border-radius:20px;border:1px solid; }
-.key-status.set   { color:var(--success);border-color:rgba(46,168,106,.4);background:rgba(46,168,106,.1); }
-.key-status.unset { color:var(--warn);border-color:rgba(232,160,32,.4);background:rgba(232,160,32,.1); }
-.header-btn { background:var(--gold-dim);border:1px solid var(--border);color:var(--gold-light);font-size:11px;padding:5px 11px;border-radius:20px;cursor:pointer;font-family:'Arial',sans-serif;transition:background .2s; }
-.header-btn:hover { background:rgba(201,168,76,.22); }
+/* ═══════════════════════════════════════
+   APP SWITCHER — top level
+═══════════════════════════════════════ */
+.app-switcher {
+  display: flex;
+  flex-shrink: 0;
+  height: 44px;
+  z-index: 200;
+}
+.app-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .25s;
+  border-bottom: 3px solid transparent;
+  user-select: none;
+}
+.app-tab.dm {
+  background: var(--dm-dark);
+  color: var(--dm-dim);
+  border-color: transparent;
+}
+.app-tab.dm.active {
+  background: var(--dm-black);
+  color: var(--dm-green);
+  border-color: var(--dm-green);
+}
+.app-tab.tx {
+  background: var(--tx-mid);
+  color: var(--tx-slate);
+  border-color: transparent;
+}
+.app-tab.tx.active {
+  background: var(--tx-navy);
+  color: var(--tx-gold-l);
+  border-color: var(--tx-gold);
+}
+.app-tab .app-icon { font-size:16px; }
 
-/* TABS */
-.tabs { background:var(--navy-mid);border-bottom:1px solid var(--border);display:flex;flex-shrink:0;overflow-x:auto; }
-.tabs::-webkit-scrollbar{height:0}
-.tab { padding:10px 18px;font-size:12px;font-family:'Arial',sans-serif;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s; }
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--gold-light);border-bottom-color:var(--gold)}
+/* ═══ APP CONTAINERS ═══ */
+.app { display:none; flex:1; flex-direction:column; overflow:hidden; }
+.app.active { display:flex; }
 
-/* PANELS */
-.panel{display:none;flex:1;flex-direction:column;overflow:hidden}
-.panel.active{display:flex}
+/* ══════════════════════════════════════════════════════
+   ██████  ██    ██ ███    ███ ██████      ███    ███  ██████  ███    ██ ███████ ██    ██
+   ██   ██ ██    ██ ████  ████ ██   ██     ████  ████ ██    ██ ████   ██ ██       ██  ██
+   ██   ██ ██    ██ ██ ████ ██ ██████      ██ ████ ██ ██    ██ ██ ██  ██ █████     ████
+   ██   ██ ██    ██ ██  ██  ██ ██   ██     ██  ██  ██ ██    ██ ██  ██ ██ ██         ██
+   ██████   ██████  ██      ██ ██████      ██      ██  ██████  ██   ████ ███████    ██
+══════════════════════════════════════════════════════ */
 
-/* CHAT */
-.chips-bar{background:var(--navy-mid);padding:8px 14px;display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;border-bottom:1px solid var(--border);flex-shrink:0}
-.chips-bar::-webkit-scrollbar{height:0}
-.chip{background:var(--gold-dim);border:1px solid var(--border);color:var(--gold-light);font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:'Arial',sans-serif;transition:background .2s;white-space:nowrap;flex-shrink:0}
-.chip:hover{background:rgba(201,168,76,.22);border-color:var(--gold)}
-#messages{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-#messages::-webkit-scrollbar{width:4px}
-#messages::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:4px}
-.msg-row{display:flex;gap:9px;max-width:840px;width:100%}
-.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
-.msg-row.ai{align-self:flex-start}
-.avatar{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0;font-family:'Arial',sans-serif}
-.avatar.ai{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy)}
-.avatar.user{background:rgba(255,255,255,.07);color:var(--slate);font-size:14px;font-weight:normal}
-.bubble{padding:12px 15px;border-radius:var(--radius);font-size:13.5px;line-height:1.75;max-width:680px;font-family:'Arial',sans-serif}
-.bubble.ai{background:var(--bubble-ai);border:1px solid var(--border);border-top-left-radius:3px}
-.bubble.user{background:var(--bubble-user);border:1px solid rgba(46,168,106,.2);border-top-right-radius:3px}
-.bubble h3{font-size:12.5px;color:var(--gold-light);margin:10px 0 5px;letter-spacing:.04em;font-family:'Georgia',serif}
-.bubble h3:first-child{margin-top:0}
-.bubble ul{padding-left:16px;margin:6px 0}
-.bubble li{margin-bottom:4px}
-.bubble strong{color:var(--gold-light);font-weight:600}
-.source-tag{display:inline-block;margin:0 2px;background:rgba(201,168,76,.08);border:1px solid var(--border);color:var(--gold);font-size:10px;padding:1px 7px;border-radius:12px;font-family:'Arial',sans-serif}
-.disclaimer{margin-top:10px;padding:8px 11px;background:rgba(232,160,32,.07);border-left:3px solid var(--warn);border-radius:4px;font-size:11.5px;color:var(--text-dim);line-height:1.5}
-.typing-indicator{display:flex;align-items:center;gap:5px;padding:4px 0}
-.dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:bounce 1.2s infinite;opacity:.7}
+/* DM HEADER */
+.dm-header { background:var(--dm-dark); border-bottom:1px solid var(--dm-border); padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.dm-logo-icon { width:32px;height:32px;background:var(--dm-green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
+.dm-logo-text { font-size:13px;font-weight:bold;color:var(--dm-text);letter-spacing:.02em; }
+.dm-logo-text span { color:var(--dm-green); }
+.dm-logo-sub { font-size:9px;color:var(--dm-dim);letter-spacing:.05em;text-transform:uppercase; }
+.dm-hdr-right { margin-left:auto;display:flex;align-items:center;gap:7px; }
+.dm-ticker { font-size:10px;color:var(--dm-green);font-family:'Courier New',monospace;background:var(--dm-green-dim);border:1px solid var(--dm-green-b);padding:3px 9px;border-radius:20px; }
+.dm-key-badge { font-size:10px;padding:3px 9px;border-radius:20px;border:1px solid;cursor:pointer; }
+.dm-key-badge.set { color:var(--dm-green);border-color:var(--dm-green-b);background:var(--dm-green-dim); }
+.dm-key-badge.unset { color:var(--dm-amber);border-color:rgba(255,165,2,.3);background:var(--dm-amber-dim); }
+.dm-hdr-btn { background:rgba(255,255,255,.05);border:1px solid var(--dm-border);color:var(--dm-mid);font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer; }
+
+/* DM TABS */
+.dm-tabs { background:var(--dm-dark);border-bottom:1px solid var(--dm-border);display:flex;flex-shrink:0;overflow-x:auto; }
+.dm-tabs::-webkit-scrollbar{height:0}
+.dm-tab { padding:9px 16px;font-size:11px;color:var(--dm-dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;letter-spacing:.02em; }
+.dm-tab:hover{color:var(--dm-text)}
+.dm-tab.active{color:var(--dm-green);border-bottom-color:var(--dm-green)}
+
+/* DM PANELS */
+.dm-panel{display:none;flex:1;flex-direction:column;overflow:hidden;background:var(--dm-black)}
+.dm-panel.active{display:flex}
+
+/* DM CHIPS */
+.dm-chips{background:var(--dm-dark);padding:7px 12px;display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;border-bottom:1px solid var(--dm-border);flex-shrink:0}
+.dm-chips::-webkit-scrollbar{height:0}
+.dm-chip{background:rgba(255,255,255,.04);border:1px solid var(--dm-border);color:var(--dm-mid);font-size:10px;padding:4px 11px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.dm-chip:hover{background:var(--dm-green-dim);border-color:var(--dm-green-b);color:var(--dm-green)}
+
+/* DM MESSAGES */
+#dm-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+#dm-messages::-webkit-scrollbar{width:4px}
+#dm-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+.dm-msg{display:flex;gap:8px;max-width:820px;width:100%}
+.dm-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.dm-msg.ai{align-self:flex-start}
+.dm-av{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0}
+.dm-av.ai{background:var(--dm-green);color:var(--dm-black)}
+.dm-av.user{background:rgba(255,255,255,.07);color:var(--dm-dim);font-size:13px;font-weight:normal}
+.dm-bub{padding:11px 14px;border-radius:var(--radius);font-size:13px;line-height:1.75;max-width:660px}
+.dm-bub.ai{background:var(--dm-card);border:1px solid var(--dm-border);border-top-left-radius:3px}
+.dm-bub.user{background:rgba(0,210,106,.08);border:1px solid var(--dm-green-b);border-top-right-radius:3px}
+.dm-bub h3{font-size:11px;color:var(--dm-green);margin:10px 0 5px;letter-spacing:.06em;text-transform:uppercase}
+.dm-bub h3:first-child{margin-top:0}
+.dm-bub ul{padding-left:14px;margin:5px 0}
+.dm-bub li{margin-bottom:3px;color:var(--dm-mid)}
+.dm-bub strong{color:var(--dm-text);font-weight:600}
+.bull-tag{display:inline-block;background:var(--dm-green-dim);border:1px solid var(--dm-green-b);color:var(--dm-green);font-size:10px;padding:1px 7px;border-radius:10px}
+.bear-tag{display:inline-block;background:var(--dm-red-dim);border:1px solid var(--dm-red-b);color:var(--dm-red);font-size:10px;padding:1px 7px;border-radius:10px}
+.dm-disc{margin-top:9px;padding:7px 10px;background:rgba(255,165,2,.07);border-left:3px solid var(--dm-amber);border-radius:4px;font-size:11px;color:var(--dm-dim);line-height:1.5}
+
+/* DM INPUT */
+.dm-input-area{background:var(--dm-dark);border-top:1px solid var(--dm-border);padding:11px 13px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+#dm-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--dm-border);border-radius:9px;padding:8px 12px;color:var(--dm-text);font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;line-height:1.5;transition:border-color .2s}
+#dm-input:focus{border-color:var(--dm-green)}
+#dm-input::placeholder{color:var(--dm-dim)}
+#dm-send{width:40px;height:40px;background:var(--dm-green);border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dm-black);font-size:15px;font-weight:bold;flex-shrink:0;transition:opacity .2s}
+#dm-send:hover{opacity:.85}#dm-send:disabled{opacity:.3;cursor:not-allowed}
+.dm-footer{text-align:center;font-size:9px;color:var(--dm-dim);padding:3px 12px 5px;background:var(--dm-dark);flex-shrink:0;letter-spacing:.03em}
+
+/* DM DEEP DIVE */
+.dm-dd-panel{overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:var(--dm-black)}
+.dm-dd-section{background:var(--dm-card);border:1px solid var(--dm-border);border-radius:var(--radius);padding:16px}
+.dm-dd-section h2{font-size:11px;color:var(--dm-green);margin-bottom:12px;font-weight:normal;letter-spacing:.06em;text-transform:uppercase}
+.ticker-row{display:flex;gap:9px;align-items:center}
+.ticker-in{background:rgba(255,255,255,.04);border:1px solid var(--dm-border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--dm-text);font-size:14px;font-family:'Courier New',monospace;outline:none;letter-spacing:.1em;text-transform:uppercase;transition:border-color .2s;width:150px}
+.ticker-in:focus{border-color:var(--dm-green)}
+.ticker-in::placeholder{font-size:11px;font-family:'Arial',sans-serif;text-transform:none;letter-spacing:.02em;color:var(--dm-dim)}
+.dm-dd-btn{padding:9px 18px;background:var(--dm-green);border:none;border-radius:var(--radius-sm);color:var(--dm-black);font-size:12px;font-weight:bold;cursor:pointer;transition:opacity .2s;letter-spacing:.04em}
+.dm-dd-btn:hover{opacity:.85}
+.dm-dd-btn:disabled{opacity:.3;cursor:not-allowed}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:600px){.case-grid{grid-template-columns:1fr}}
+.bull-case{background:var(--dm-green-dim);border:1px solid var(--dm-green-b);border-radius:var(--radius);padding:13px}
+.bear-case{background:var(--dm-red-dim);border:1px solid var(--dm-red-b);border-radius:var(--radius);padding:13px}
+.case-title{font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.bull-case .case-title{color:var(--dm-green)}.bear-case .case-title{color:var(--dm-red)}
+.case-body{font-size:12px;color:var(--dm-mid);line-height:1.7}
+.gap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0}
+.gap-card{background:var(--dm-card2);border:1px solid var(--dm-border);border-radius:var(--radius-sm);padding:9px;text-align:center}
+.gap-card .val{font-size:15px;font-weight:bold;margin-bottom:2px}
+.gap-card .lbl{font-size:9px;color:var(--dm-dim);letter-spacing:.04em;text-transform:uppercase}
+
+/* DM PLAYBOOK */
+.dm-pb-panel{overflow-y:auto;padding:18px;background:var(--dm-black)}
+.dm-pb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.dm-pb-card{background:var(--dm-card);border:1px solid var(--dm-border);border-radius:var(--radius);padding:16px}
+.dm-pb-card h3{font-size:11px;color:var(--dm-green);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:bold}
+.dm-pb-card p{font-size:12px;color:var(--dm-mid);line-height:1.7}
+.dm-pb-card p strong{color:var(--dm-text)}
+.dm-pb-card .quote{margin-top:9px;padding:9px 11px;background:var(--dm-green-dim);border-left:3px solid var(--dm-green);border-radius:4px;font-size:11px;color:var(--dm-mid);font-style:italic;line-height:1.6}
+.rule-badge{display:inline-block;background:var(--dm-green);color:var(--dm-black);font-size:9px;font-weight:bold;padding:2px 7px;border-radius:10px;margin-bottom:7px;letter-spacing:.04em}
+
+/* TYPING */
+.typing{display:flex;align-items:center;gap:4px;padding:3px 0}
+.dot{width:6px;height:6px;border-radius:50%;animation:bounce 1.2s infinite;opacity:.7}
+.dm-panel .dot{background:var(--dm-green)}
+.tx-panel .dot{background:var(--tx-gold)}
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-.input-area{background:var(--navy-mid);border-top:1px solid var(--border);padding:12px 14px;display:flex;gap:9px;align-items:flex-end;flex-shrink:0}
-#userInput{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:9px 13px;color:var(--text);font-size:13.5px;font-family:'Arial',sans-serif;resize:none;min-height:42px;max-height:110px;outline:none;line-height:1.5;transition:border-color .2s}
-#userInput:focus{border-color:var(--gold)}
-#userInput::placeholder{color:var(--slate)}
-#sendBtn{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:16px;transition:opacity .2s,transform .1s;flex-shrink:0}
-#sendBtn:hover{opacity:.88}#sendBtn:active{transform:scale(.95)}#sendBtn:disabled{opacity:.35;cursor:not-allowed}
-.input-footer{text-align:center;font-size:10px;color:var(--text-dim);font-family:'Arial',sans-serif;padding:4px 14px 6px;background:var(--navy-mid);flex-shrink:0}
 
-/* CALCULATOR */
-.calc-panel{overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
-.calc-section{background:var(--navy-light);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-.calc-section h2{font-size:14px;color:var(--gold-light);margin-bottom:14px;font-weight:normal;letter-spacing:.03em;font-family:'Georgia',serif}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ══════════════════════════════════════════════════════
+   TAX APP
+══════════════════════════════════════════════════════ */
+
+/* TX HEADER */
+.tx-header{background:var(--tx-mid);border-bottom:1px solid var(--tx-border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tx-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--tx-gold),var(--tx-gold-l));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;color:var(--tx-navy);flex-shrink:0}
+.tx-logo-text{font-size:13px;font-weight:normal;color:var(--tx-gold-l);letter-spacing:.03em}
+.tx-logo-sub{font-size:9px;color:var(--tx-slate);letter-spacing:.04em}
+.tx-hdr-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+.tx-key-badge{font-size:10px;padding:3px 9px;border-radius:20px;border:1px solid;cursor:pointer}
+.tx-key-badge.set{color:var(--tx-success);border-color:rgba(46,168,106,.4);background:rgba(46,168,106,.1)}
+.tx-key-badge.unset{color:var(--tx-warn);border-color:rgba(232,160,32,.4);background:rgba(232,160,32,.1)}
+.tx-hdr-btn{background:var(--tx-gold-dim);border:1px solid var(--tx-border);color:var(--tx-gold-l);font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:background .2s}
+.tx-hdr-btn:hover{background:rgba(201,168,76,.22)}
+
+/* TX TABS */
+.tx-tabs{background:var(--tx-mid);border-bottom:1px solid var(--tx-border);display:flex;flex-shrink:0;overflow-x:auto}
+.tx-tabs::-webkit-scrollbar{height:0}
+.tx-tab{padding:9px 16px;font-size:11px;color:var(--tx-slate);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tx-tab:hover{color:var(--tx-text)}
+.tx-tab.active{color:var(--tx-gold-l);border-bottom-color:var(--tx-gold)}
+
+/* TX PANELS */
+.tx-panel{display:none;flex:1;flex-direction:column;overflow:hidden;background:var(--tx-navy)}
+.tx-panel.active{display:flex}
+
+/* TX CHIPS */
+.tx-chips{background:var(--tx-mid);padding:7px 12px;display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;border-bottom:1px solid var(--tx-border);flex-shrink:0}
+.tx-chips::-webkit-scrollbar{height:0}
+.tx-chip{background:var(--tx-gold-dim);border:1px solid var(--tx-border);color:var(--tx-gold-l);font-size:10px;padding:4px 11px;border-radius:20px;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.tx-chip:hover{background:rgba(201,168,76,.22);border-color:var(--tx-gold)}
+
+/* TX MESSAGES */
+#tx-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+#tx-messages::-webkit-scrollbar{width:4px}
+#tx-messages::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:4px}
+.tx-msg{display:flex;gap:8px;max-width:820px;width:100%}
+.tx-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.tx-msg.ai{align-self:flex-start}
+.tx-av{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0}
+.tx-av.ai{background:linear-gradient(135deg,var(--tx-gold),var(--tx-gold-l));color:var(--tx-navy)}
+.tx-av.user{background:rgba(255,255,255,.07);color:var(--tx-slate);font-size:13px;font-weight:normal}
+.tx-bub{padding:11px 14px;border-radius:var(--radius);font-size:13px;line-height:1.75;max-width:660px}
+.tx-bub.ai{background:var(--tx-ai);border:1px solid var(--tx-border);border-top-left-radius:3px}
+.tx-bub.user{background:var(--tx-user);border:1px solid rgba(46,168,106,.2);border-top-right-radius:3px}
+.tx-bub h3{font-size:11px;color:var(--tx-gold-l);margin:10px 0 5px;letter-spacing:.04em}
+.tx-bub h3:first-child{margin-top:0}
+.tx-bub ul{padding-left:14px;margin:5px 0}
+.tx-bub li{margin-bottom:3px}
+.tx-bub strong{color:var(--tx-gold-l);font-weight:600}
+.src-tag{display:inline-block;margin:0 2px;background:rgba(201,168,76,.08);border:1px solid var(--tx-border);color:var(--tx-gold);font-size:9px;padding:1px 6px;border-radius:10px}
+.tx-disc{margin-top:9px;padding:7px 10px;background:rgba(232,160,32,.07);border-left:3px solid var(--tx-warn);border-radius:4px;font-size:11px;color:var(--tx-dim);line-height:1.5}
+
+/* TX INPUT */
+.tx-input-area{background:var(--tx-mid);border-top:1px solid var(--tx-border);padding:11px 13px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+#tx-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--tx-border);border-radius:9px;padding:8px 12px;color:var(--tx-text);font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;line-height:1.5;transition:border-color .2s}
+#tx-input:focus{border-color:var(--tx-gold)}
+#tx-input::placeholder{color:var(--tx-slate)}
+#tx-send{width:40px;height:40px;background:linear-gradient(135deg,var(--tx-gold),var(--tx-gold-l));border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx-navy);font-size:15px;flex-shrink:0;transition:opacity .2s}
+#tx-send:hover{opacity:.88}#tx-send:disabled{opacity:.3;cursor:not-allowed}
+.tx-footer{text-align:center;font-size:9px;color:var(--tx-dim);padding:3px 12px 5px;background:var(--tx-mid);flex-shrink:0;letter-spacing:.03em}
+
+/* TX CALC */
+.tx-calc-panel{overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:var(--tx-navy)}
+.tx-calc-sec{background:var(--tx-light);border:1px solid var(--tx-border);border-radius:var(--radius);padding:16px}
+.tx-calc-sec h2{font-size:12px;color:var(--tx-gold-l);margin-bottom:12px;font-weight:normal;letter-spacing:.03em}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:600px){.field-grid{grid-template-columns:1fr}}
-.field label{display:block;font-size:11px;color:var(--slate);font-family:'Arial',sans-serif;margin-bottom:5px;letter-spacing:.03em;text-transform:uppercase}
-.field input,.field select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:13px;font-family:'Arial',sans-serif;outline:none;transition:border-color .2s}
-.field input:focus,.field select:focus{border-color:var(--gold)}
-.field select option{background:var(--navy-mid)}
-.calc-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:var(--radius-sm);color:var(--navy);font-size:13px;font-weight:bold;font-family:'Arial',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .2s;letter-spacing:.03em}
-.calc-btn:hover{opacity:.88}
-.result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Arial',sans-serif;font-size:13px}
+.field label{display:block;font-size:10px;color:var(--tx-slate);margin-bottom:4px;letter-spacing:.03em;text-transform:uppercase}
+.field input,.field select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--tx-border);border-radius:var(--radius-sm);padding:8px 11px;color:var(--tx-text);font-size:12px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--tx-gold)}
+.field select option{background:var(--tx-mid)}
+.tx-calc-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--tx-gold),var(--tx-gold-l));border:none;border-radius:var(--radius-sm);color:var(--tx-navy);font-size:12px;font-weight:bold;cursor:pointer;margin-top:4px;transition:opacity .2s;letter-spacing:.03em}
+.tx-calc-btn:hover{opacity:.88}
+.result-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px}
 .result-row:last-child{border-bottom:none}
-.result-label{color:var(--text-dim)}.result-value{color:var(--text);font-weight:600}
-.result-value.gold{color:var(--gold-light);font-size:15px}.result-value.green{color:var(--success)}
-.strategy-card{background:rgba(201,168,76,.06);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px}
-.strategy-card h4{font-size:12px;color:var(--gold-light);margin-bottom:6px;font-family:'Arial',sans-serif;font-weight:bold}
-.strategy-card p{font-size:12px;color:var(--text-dim);line-height:1.6;font-family:'Arial',sans-serif}
-.strategy-card .saving{font-size:13px;color:var(--success);font-weight:bold;margin-top:5px;font-family:'Arial',sans-serif}
+.rlabel{color:var(--tx-dim)}.rval{font-weight:600;color:var(--tx-text)}
+.rval.gold{color:var(--tx-gold-l);font-size:14px}.rval.green{color:var(--tx-success)}
+.strat-card{background:rgba(201,168,76,.06);border:1px solid var(--tx-border2);border-radius:var(--radius-sm);padding:11px 13px;margin-top:9px}
+.strat-card h4{font-size:11px;color:var(--tx-gold-l);margin-bottom:5px;font-weight:bold}
+.strat-card p{font-size:11.5px;color:var(--tx-dim);line-height:1.6}
+.strat-card .saving{font-size:12px;color:var(--tx-success);font-weight:bold;margin-top:4px}
 
-/* REFERENCE */
-.ref-panel{overflow-y:auto;padding:20px}
-.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.ref-card{background:var(--navy-light);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.ref-card h3{font-size:13px;color:var(--gold-light);margin-bottom:10px;font-family:'Georgia',serif;font-weight:normal}
-.ref-table{width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;font-size:11.5px}
-.ref-table th{background:rgba(201,168,76,.1);color:var(--gold);padding:5px 8px;text-align:left;border:1px solid var(--border);font-weight:normal}
-.ref-table td{padding:4px 8px;border:1px solid rgba(255,255,255,.05);color:var(--text)}
+/* TX REF */
+.tx-ref-panel{overflow-y:auto;padding:18px;background:var(--tx-navy)}
+.tx-ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.tx-ref-card{background:var(--tx-light);border:1px solid var(--tx-border);border-radius:var(--radius);padding:14px}
+.tx-ref-card h3{font-size:12px;color:var(--tx-gold-l);margin-bottom:9px;font-weight:normal}
+.ref-table{width:100%;border-collapse:collapse;font-size:11px}
+.ref-table th{background:rgba(201,168,76,.1);color:var(--tx-gold);padding:4px 7px;text-align:left;border:1px solid var(--tx-border);font-weight:normal}
+.ref-table td{padding:3px 7px;border:1px solid rgba(255,255,255,.05);color:var(--tx-text)}
 .ref-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
-.ref-highlight{font-size:12px;color:var(--text-dim);margin-top:8px;font-family:'Arial',sans-serif;line-height:1.6}
-.ref-highlight strong{color:var(--gold-light)}
+.ref-note{font-size:11px;color:var(--tx-dim);margin-top:7px;line-height:1.6}
+.ref-note strong{color:var(--tx-gold-l)}
 
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center}
+/* SHARED MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;align-items:center;justify-content:center}
 .modal-overlay.active{display:flex}
-.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:480px;width:92%;max-height:85vh;overflow-y:auto}
-.modal h2{font-size:15px;color:var(--gold-light);margin-bottom:14px;font-weight:normal;font-family:'Georgia',serif}
-.modal p{font-size:12.5px;color:var(--text-dim);line-height:1.7;margin-bottom:10px;font-family:'Arial',sans-serif}
-.modal h3{font-size:12px;color:var(--gold);margin:14px 0 6px;font-family:'Arial',sans-serif;font-weight:bold;text-transform:uppercase;letter-spacing:.04em}
-.key-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;color:var(--text);font-size:13px;font-family:'Arial',sans-serif;outline:none;margin-bottom:10px}
-.key-input:focus{border-color:var(--gold)}
-.modal-btn{padding:9px 20px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:var(--radius-sm);color:var(--navy);cursor:pointer;font-family:'Arial',sans-serif;font-size:12.5px;font-weight:bold;margin-right:8px}
-.modal-btn.secondary{background:var(--gold-dim);border:1px solid var(--border);color:var(--gold-light);font-weight:normal}
-.modal-btn:hover{opacity:.88}
-.cost-note{background:rgba(46,168,106,.08);border:1px solid rgba(46,168,106,.2);border-radius:var(--radius-sm);padding:10px 12px;font-size:11.5px;color:var(--text-dim);font-family:'Arial',sans-serif;line-height:1.6;margin-top:10px}
-.cost-note strong{color:var(--success)}
+.modal{border:1px solid;border-radius:var(--radius);padding:22px;max-width:460px;width:92%;max-height:85vh;overflow-y:auto}
+.modal.dm-modal{background:var(--dm-card);border-color:var(--dm-border2)}
+.modal.tx-modal{background:var(--tx-mid);border-color:var(--tx-border2)}
+.modal h2{font-size:14px;margin-bottom:12px;font-weight:bold;letter-spacing:.03em}
+.modal.dm-modal h2{color:var(--dm-green)}
+.modal.tx-modal h2{color:var(--tx-gold-l)}
+.modal p{font-size:12px;line-height:1.7;margin-bottom:9px}
+.modal.dm-modal p{color:var(--dm-mid)}
+.modal.tx-modal p{color:var(--tx-dim)}
+.modal h3{font-size:10px;margin:12px 0 5px;letter-spacing:.06em;text-transform:uppercase}
+.modal.dm-modal h3{color:var(--dm-dim)}
+.modal.tx-modal h3{color:var(--tx-slate)}
+.key-in{width:100%;border-radius:var(--radius-sm);padding:9px 12px;font-size:12px;font-family:'Courier New',monospace;outline:none;margin-bottom:9px;transition:border-color .2s}
+.modal.dm-modal .key-in{background:rgba(255,255,255,.04);border:1px solid var(--dm-border);color:var(--dm-text)}
+.modal.dm-modal .key-in:focus{border-color:var(--dm-green)}
+.modal.tx-modal .key-in{background:rgba(255,255,255,.04);border:1px solid var(--tx-border);color:var(--tx-text)}
+.modal.tx-modal .key-in:focus{border-color:var(--tx-gold)}
+.mbtn{padding:8px 18px;border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:bold;margin-right:7px;transition:opacity .2s}
+.mbtn:hover{opacity:.85}
+.mbtn.sec{font-weight:normal}
+.modal.dm-modal .mbtn.pri{background:var(--dm-green);color:var(--dm-black)}
+.modal.dm-modal .mbtn.sec{background:rgba(255,255,255,.06);border:1px solid var(--dm-border);color:var(--dm-mid)}
+.modal.tx-modal .mbtn.pri{background:linear-gradient(135deg,var(--tx-gold),var(--tx-gold-l));color:var(--tx-navy)}
+.modal.tx-modal .mbtn.sec{background:var(--tx-gold-dim);border:1px solid var(--tx-border);color:var(--tx-gold-l)}
+.cost-note{border-radius:var(--radius-sm);padding:9px 11px;font-size:11px;line-height:1.6;margin-top:9px}
+.modal.dm-modal .cost-note{background:var(--dm-green-dim);border:1px solid var(--dm-green-b);color:var(--dm-dim)}
+.modal.dm-modal .cost-note strong{color:var(--dm-green)}
+.modal.tx-modal .cost-note{background:rgba(46,168,106,.08);border:1px solid rgba(46,168,106,.2);color:var(--tx-dim)}
+.modal.tx-modal .cost-note strong{color:var(--tx-success)}
 </style>
 </head>
 <body>
 
-<!-- API KEY MODAL -->
+<!-- ═══ KEY MODALS ═══ -->
 <div class="modal-overlay active" id="keyModal">
-  <div class="modal">
-    <h2>🔑 Enter Your Anthropic API Key</h2>
-    <p>This tool uses the Anthropic Claude API to answer your tax questions. Each person needs their own free API key — it stays in your browser only and is never sent anywhere except directly to Anthropic.</p>
-    <h3>How to get your free key (2 minutes)</h3>
-    <p>1. Go to <strong style="color:var(--gold-light)">console.anthropic.com</strong><br>
-    2. Sign up for a free account (no credit card needed to start)<br>
-    3. Go to <strong style="color:var(--gold-light)">API Keys</strong> → <strong style="color:var(--gold-light)">Create Key</strong><br>
-    4. Copy the key (starts with <code style="color:var(--gold-light)">sk-ant-</code>) and paste it below</p>
-    <input type="password" class="key-input" id="apiKeyInput" placeholder="sk-ant-api03-...">
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="modal-btn" onclick="saveKey()">Save &amp; Start →</button>
-      <button class="modal-btn secondary" onclick="closeKeyModal()">I'll add it later</button>
-    </div>
-    <div class="cost-note">
-      <strong>Cost estimate for 4 people:</strong> A typical tax question uses ~2,000–4,000 tokens total. At Claude Haiku 4.5 rates (~$1/million tokens), 100 questions costs roughly <strong>$0.30</strong>. New accounts get <strong>$5 free credits</strong> — enough for hundreds of conversations. The key is stored in your browser memory only and cleared when you close the tab.
-    </div>
+  <div class="modal dm-modal">
+    <h2>⚡ FINANCIAL INTELLIGENCE HUB</h2>
+    <p>Enter your Anthropic API key to unlock both tools — the Dumb Money Social Arb Advisor and the SA Tax Advisor 2026/27. Your key stays in your browser only.</p>
+    <h3>Get your free key (2 min)</h3>
+    <p>1. Go to <strong style="color:var(--dm-green)">console.anthropic.com</strong> → sign up free<br>
+    2. API Keys → Create Key → copy it (starts with sk-ant-)<br>
+    3. Paste below</p>
+    <input type="password" class="key-in" id="keyInput" placeholder="sk-ant-api03-...">
+    <div><button class="mbtn pri" onclick="saveKey()">Unlock Both Tools →</button><button class="mbtn sec" onclick="document.getElementById('keyModal').classList.remove('active')">Later</button></div>
+    <div class="cost-note"><strong>$5 free credits</strong> on signup · ~1,000+ conversations · No card needed</div>
   </div>
 </div>
 
-<header>
-  <div class="logo-mark">SA</div>
-  <div class="header-text">
-    <h1>SA Tax Advisor — 2026/27</h1>
-    <p>SARS Budget 2026 · Income Tax Act · Legal optimisation only</p>
+<!-- ═══════════════════════════════════
+     APP SWITCHER
+═══════════════════════════════════ -->
+<div class="app-switcher">
+  <div class="app-tab dm active" onclick="switchApp('dm', this)">
+    <span class="app-icon">💸</span> DUMB MONEY
   </div>
-  <div class="header-right">
-    <div id="keyStatusBadge" class="key-status unset" onclick="document.getElementById('keyModal').classList.add('active')" style="cursor:pointer">⚠ No API Key</div>
-    <button class="header-btn" onclick="document.getElementById('keyModal').classList.add('active')">⚙ Settings</button>
+  <div class="app-tab tx" onclick="switchApp('tx', this)">
+    <span class="app-icon">📊</span> SA TAX ADVISOR
   </div>
-</header>
-
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('chat',this)">💬 Advisor Chat</div>
-  <div class="tab" onclick="switchTab('calc',this)">🧮 Tax Calculator</div>
-  <div class="tab" onclick="switchTab('ref',this)">📋 2026/27 Reference</div>
 </div>
 
-<!-- CHAT PANEL -->
-<div class="panel active" id="panel-chat">
-  <div class="chips-bar">
-    <div class="chip" onclick="askChip('How can I legally reduce my taxable income this year?')">💡 Reduce Tax</div>
-    <div class="chip" onclick="askChip('What are the 2026/27 income tax brackets?')">📊 Brackets</div>
-    <div class="chip" onclick="askChip('Explain the retirement fund contribution deduction strategy for 2026/27')">🏦 Retirement</div>
-    <div class="chip" onclick="askChip('How does the Two-Pot retirement system work and what are the tax implications?')">🏺 Two-Pot</div>
-    <div class="chip" onclick="askChip('What are capital gains tax rates and key exclusions?')">📈 CGT</div>
-    <div class="chip" onclick="askChip('Do I qualify as a Small Business Corporation and what are the tax benefits?')">🏢 SBC</div>
-    <div class="chip" onclick="askChip('What are the medical aid tax credit rates for 2026/27?')">🏥 Medical</div>
-    <div class="chip" onclick="askChip('Explain the General Anti-Avoidance Rule GAAR and what it means for tax planning')">⚖️ GAAR</div>
-    <div class="chip" onclick="askChip('What changed in the 2026 budget for individual taxpayers?')">⚡ Budget Changes</div>
+<!-- ══════════════════════════════════════
+     DUMB MONEY APP
+══════════════════════════════════════ -->
+<div class="app active" id="app-dm">
+
+  <div class="dm-header">
+    <div class="dm-logo-icon">💸</div>
+    <div>
+      <div class="dm-logo-text"><span>DUMB</span> MONEY ADVISOR</div>
+      <div class="dm-logo-sub">Social Arbitrage Intelligence · Chris Camillo Method</div>
+    </div>
+    <div class="dm-hdr-right">
+      <div class="dm-ticker">● SOCIAL ARB ACTIVE</div>
+      <div id="dm-key-badge" class="dm-key-badge unset" onclick="document.getElementById('keyModal').classList.add('active')" style="cursor:pointer">⚠ No Key</div>
+    </div>
   </div>
-  <div id="messages">
-    <div class="msg-row ai">
-      <div class="avatar ai">SA</div>
-      <div class="bubble ai">
-        <h3>SA Tax Advisor — 2026/27</h3>
-        Good day. I'm your South African tax efficiency advisor, loaded with the full <strong>SARS Budget 2026 Tax Guide</strong> and <strong>SARS General Guide to Taxation in South Africa</strong>.<br><br>
-        Tell me your situation — income, age, employment type, business interests — and I'll find your highest-impact legal tax saving strategies with actual rand calculations.<br><br>
-        <strong>I cover:</strong> income tax brackets · retirement fund deductions (up to R430k) · tax-free savings (R46k/yr) · CGT planning · medical credits · SBC structure · travel allowances · Two-Pot system · GAAR boundaries · ETI incentives
-        <div class="disclaimer">⚖️ All strategies are within South African law. Sources cited in every response. Not a substitute for a registered SARS Tax Practitioner.</div>
+
+  <div class="dm-tabs">
+    <div class="dm-tab active" onclick="switchDmTab('chat',this)">💬 Arb Advisor</div>
+    <div class="dm-tab" onclick="switchDmTab('dive',this)">🔬 Stock Deep Dive</div>
+    <div class="dm-tab" onclick="switchDmTab('pb',this)">📖 The Playbook</div>
+  </div>
+
+  <!-- DM CHAT -->
+  <div class="dm-panel active" id="dm-panel-chat">
+    <div class="dm-chips">
+      <div class="dm-chip" onclick="dmAsk('What sectors are showing early social arb signals Wall Street hasn\'t priced in yet?')">🔍 Early Signals</div>
+      <div class="dm-chip" onclick="dmAsk('How do I find an information imbalance before Wall Street discovers it?')">⚡ Info Imbalance</div>
+      <div class="dm-chip" onclick="dmAsk('What social platforms and signals should I watch daily to find stock ideas?')">📱 Social Scanning</div>
+      <div class="dm-chip" onclick="dmAsk('How do I evaluate if a trend qualifies as a real social arb play?')">✅ Qualify Trend</div>
+      <div class="dm-chip" onclick="dmAsk('What are your rules on position sizing and when to sell a social arb trade?')">💼 Position Rules</div>
+      <div class="dm-chip" onclick="dmAsk('What megatrends are you watching for 2025 and 2026 through the social arb lens?')">🚀 Megatrends</div>
+    </div>
+    <div id="dm-messages">
+      <div class="dm-msg ai">
+        <div class="dm-av ai">💸</div>
+        <div class="dm-bub ai">
+          <h3>Dumb Money Social Arb Advisor</h3>
+          What's up. I'm your Dumb Money advisor — built on Chris Camillo's Social Arbitrage methodology. I turned $20k into $60M+ not by reading earnings reports, but by <strong>watching the world</strong>.<br><br>
+          My edge: <strong>I buy information imbalances. I sell when Wall Street catches up.</strong><br><br>
+          Ask me about any trend, stock, or sector — I'll break it down through the social arb lens. Or use the <strong>Stock Deep Dive</strong> tab for a full bull vs bear breakdown on any ticker.
+          <div class="dm-disc">⚠️ Not financial advice. Educational frame of reference only. Always do your own work.</div>
+        </div>
+      </div>
+    </div>
+    <div class="dm-input-area">
+      <textarea id="dm-input" placeholder="Ask about a trend, stock, sector, or social arb signal…" rows="1" onkeydown="dmKey(event)" oninput="resize(this)"></textarea>
+      <button id="dm-send" onclick="dmSend()">→</button>
+    </div>
+    <div class="dm-footer">SOCIAL ARB INTELLIGENCE · NOT FINANCIAL ADVICE · EDUCATIONAL REFERENCE ONLY</div>
+  </div>
+
+  <!-- DM DEEP DIVE -->
+  <div class="dm-panel" id="dm-panel-dive">
+    <div class="dm-dd-panel">
+      <div class="dm-dd-section">
+        <h2>Stock Deep Dive — Social Arb Analysis</h2>
+        <p style="font-size:12px;color:var(--dm-dim);margin-bottom:12px">Enter any ticker for a full breakdown: Social Arb Score, information imbalance, bull case, bear case, and what to watch on social media.</p>
+        <div class="ticker-row">
+          <input type="text" class="ticker-in" id="tickerIn" placeholder="e.g. NVDA" maxlength="10">
+          <button class="dm-dd-btn" id="diveBtn" onclick="runDive()">Deep Dive →</button>
+        </div>
+        <div id="diveResult" style="display:none;margin-top:14px"></div>
       </div>
     </div>
   </div>
-  <div class="input-area">
-    <textarea id="userInput" placeholder="Describe your situation or ask a specific question…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button id="sendBtn" onclick="sendMessage()">➤</button>
-  </div>
-  <div class="input-footer">2026/27 SARS data · Sources cited · Legal optimisation only · Not registered tax advice</div>
-</div>
 
-<!-- CALCULATOR PANEL -->
-<div class="panel" id="panel-calc">
-  <div class="calc-panel">
-    <div class="calc-section">
-      <h2>Your Tax Profile — 2026/27</h2>
-      <div class="field-grid">
-        <div class="field"><label>Annual Gross Income (R)</label><input type="number" id="c_income" placeholder="e.g. 650 000" min="0"></div>
-        <div class="field"><label>Age Group</label>
-          <select id="c_age"><option value="under65">Under 65</option><option value="65to74">65 – 74</option><option value="75plus">75 and older</option></select></div>
-        <div class="field"><label>Medical Aid Members (incl. you)</label><input type="number" id="c_medical" placeholder="e.g. 3" min="0" max="20" value="1"></div>
-        <div class="field"><label>Retirement Contributions This Year (R)</label><input type="number" id="c_ret" placeholder="e.g. 0" min="0"></div>
-        <div class="field"><label>Tax-Free Savings Contributed (R)</label><input type="number" id="c_tfsa" placeholder="max R46 000" min="0"></div>
-        <div class="field"><label>Taxpayer Type</label>
-          <select id="c_type"><option value="employee">Salaried Employee</option><option value="provisional">Provisional / Freelancer</option><option value="sbc">Small Business Owner</option></select></div>
+  <!-- DM PLAYBOOK -->
+  <div class="dm-panel" id="dm-panel-pb">
+    <div class="dm-pb-panel">
+      <div class="dm-pb-grid">
+        <div class="dm-pb-card"><div class="rule-badge">CORE</div><h3>What Is Social Arbitrage?</h3><p><strong>Exploiting the gap between what the real world knows and what Wall Street has priced in.</strong> Institutions miss what's happening on TikTok, in malls, in school playgrounds. That gap is your edge.</p><div class="quote">"Wall Street is focused on the 'what', but as a social arb investor, you focus on the 'why' before the 'what' shows up in the numbers."</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">RULE 1</div><h3>Buy the Information Imbalance</h3><p><strong>Buy when you discover something the market hasn't priced in. Sell when Wall Street catches up.</strong> The moment CNBC talks about it, your edge is gone.</p><div class="quote">"I buy a company's stock upon discovery of an information imbalance... and sell when that information becomes widely accepted as fact by Wall Street."</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">RULE 2</div><h3>Zero Financial Literacy Required</h3><p><strong>Ignore earnings reports, P/E ratios, analyst upgrades.</strong> That's backward-looking noise. Your edge is forward-looking social observation — what are people buying and talking about that hasn't shown up in the numbers yet?</p><div class="quote">"What I do requires zero financial literacy."</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">RULE 3</div><h3>No Stop Losses. Ever.</h3><p><strong>Stop losses kick you out of great trades on noise.</strong> What changes your mind is not price action — it's a change in the underlying social signal. Price is not your signal. People are.</p><div class="quote">"Never ever use stop losses." — Dumb Money Live</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">RULE 4</div><h3>Concentrate When Convicted</h3><p><strong>When you've found a real information imbalance, concentrate.</strong> Diversification is what you do when you don't know something. Small positions on high-conviction ideas don't make sense.</p><div class="quote">"Invest with concentration, not diversification, when you have high conviction."</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">RULE 5</div><h3>Sell Into Mainstream</h3><p><strong>When Bloomberg or CNBC runs your story, that's your exit — not your entry.</strong> The imbalance has been arbitraged away. Take the profit and find the next one.</p><div class="quote">"Sell when the story you discovered hits the mainstream news."</div></div>
+        <div class="dm-pb-card"><div class="rule-badge">WHERE TO HUNT</div><h3>Your Daily Signal Sources</h3><p><strong>TikTok</strong> (fastest consumer signal) · <strong>Reddit</strong> (niche product subs) · <strong>Instagram/X</strong> (lifestyle shifts) · <strong>School playgrounds &amp; malls</strong> (what kids obsess over) · <strong>Your own purchases</strong> (if you can't stop buying it, others can't either)</p></div>
+        <div class="dm-pb-card"><div class="rule-badge">MEGATRENDS 2025–26</div><h3>What Chris Is Watching</h3><p><strong>Humanoid Robotics:</strong> Tesla Optimus, Figure AI, 1X — multi-trillion, social signals early and accelerating.<br><strong>AI Infrastructure:</strong> Power, cooling, data layer — still underappreciated.<br><strong>Gen Z Spending:</strong> Where they actually spend vs where institutions think they spend.</p></div>
       </div>
-      <button class="calc-btn" onclick="calculateTax()">Calculate Tax &amp; Show Strategies →</button>
-    </div>
-    <div class="calc-section" id="calcResults" style="display:none">
-      <h2>Your 2026/27 Tax Assessment</h2>
-      <div id="resultRows"></div>
-      <div id="strategyCards" style="margin-top:14px"></div>
     </div>
   </div>
 </div>
 
-<!-- REFERENCE PANEL -->
-<div class="panel" id="panel-ref">
-  <div class="ref-panel">
-    <div class="ref-grid">
-      <div class="ref-card"><h3>Income Tax Brackets 2026/27</h3>
-        <table class="ref-table"><tr><th>Taxable Income (R)</th><th>Rate</th></tr>
-          <tr><td>1 – 245,100</td><td>18%</td></tr><tr><td>245,101 – 383,100</td><td>26% + R44,118</td></tr>
-          <tr><td>383,101 – 530,200</td><td>31% + R79,998</td></tr><tr><td>530,201 – 695,800</td><td>36% + R125,599</td></tr>
-          <tr><td>695,801 – 887,000</td><td>39% + R185,215</td></tr><tr><td>887,001 – 1,878,600</td><td>41% + R259,783</td></tr>
-          <tr><td>1,878,601+</td><td>45% + R666,339</td></tr></table>
-        <div class="ref-highlight">Rebates: Primary <strong>R17,820</strong> · Secondary (65+) <strong>R9,765</strong> · Tertiary (75+) <strong>R3,249</strong></div></div>
-      <div class="ref-card"><h3>Key Limits &amp; Thresholds</h3>
-        <table class="ref-table"><tr><th>Item</th><th>Amount</th></tr>
-          <tr><td>Tax threshold (under 65)</td><td>R99,000</td></tr><tr><td>Tax threshold (65–74)</td><td>R153,250</td></tr>
-          <tr><td>Tax threshold (75+)</td><td>R171,300</td></tr><tr><td>Tax-free savings limit</td><td>R46,000/yr</td></tr>
-          <tr><td>Retirement deduction cap</td><td>R430,000</td></tr><tr><td>Retirement deduction %</td><td>27.5% of income</td></tr>
-          <tr><td>Interest exempt (under 65)</td><td>R23,800/yr</td></tr><tr><td>Interest exempt (65+)</td><td>R34,500/yr</td></tr>
-          <tr><td>CGT annual exclusion</td><td>R50,000</td></tr><tr><td>CGT primary residence</td><td>R3M excl.</td></tr></table></div>
-      <div class="ref-card"><h3>Small Business Corporation</h3>
-        <table class="ref-table"><tr><th>Taxable Income (R)</th><th>Rate</th></tr>
-          <tr><td>1 – 99,000</td><td>0%</td></tr><tr><td>99,001 – 365,000</td><td>7%</td></tr>
-          <tr><td>365,001 – 550,000</td><td>R18,620 + 21%</td></tr><tr><td>550,001+</td><td>R57,470 + 27%</td></tr></table>
-        <div class="ref-highlight">Requires: <strong>natural person shareholders only</strong>, gross income ≤ R20M, no other company shareholdings, ≤20% investment/personal service income.</div></div>
-      <div class="ref-card"><h3>Medical Aid Tax Credits</h3>
-        <table class="ref-table"><tr><th>Beneficiaries</th><th>Monthly Credit</th></tr>
-          <tr><td>First 2 (each)</td><td>R376/month</td></tr><tr><td>Each additional</td><td>R254/month</td></tr></table>
-        <div class="ref-highlight">Under 65: additional credit = 25% of qualifying expenses above <strong>7.5% of taxable income floor</strong>.<br>65+ or disability: <strong>33.3%</strong>, no 7.5% floor.</div></div>
-      <div class="ref-card"><h3>Capital Gains — Effective Rates</h3>
-        <table class="ref-table"><tr><th>Taxpayer</th><th>Max Effective Rate</th></tr>
-          <tr><td>Individuals &amp; special trusts</td><td>18%</td></tr><tr><td>Companies</td><td>21.6%</td></tr><tr><td>Other trusts</td><td>36%</td></tr></table>
-        <div class="ref-highlight">Small biz exclusion: <strong>R2.7M</strong> (age 55+, business ≤ R15M). Death exclusion: <strong>R440,000</strong>.</div></div>
-      <div class="ref-card"><h3>Two-Pot Retirement (from 1 Sep 2024)</h3>
-        <div class="ref-highlight">
-          <strong>Savings Component:</strong> Once/year access, min R2k. Taxed at <strong>marginal rates</strong>.<br>
-          <strong>Retirement Component:</strong> Locked until retirement. First <strong>R550k at 0%</strong> on exit.<br>
-          <strong>Vested Component:</strong> Pre-Sep 2024 savings — old rules apply.<br><br>
-          💡 Use savings component for emergencies only. Retirement component tax tables are far more favourable.
-        </div></div>
-      <div class="ref-card"><h3>GAAR Boundaries (s.80A–80L)</h3>
-        <div class="ref-highlight">
-          SARS can disallow arrangements where <strong>sole/main purpose is tax benefit</strong> AND the arrangement lacks commercial substance, uses abnormal means, or abuses the Act.<br><br>
-          ✅ <strong>Safe:</strong> Real business with genuine commercial purpose that is also tax-efficient.<br>
-          ❌ <strong>Unsafe:</strong> Artificial structures, sham transactions, form-over-substance.<br><br>
-          Always document your business purpose.
-        </div></div>
-      <div class="ref-card"><h3>Transfer Duty</h3>
-        <table class="ref-table"><tr><th>Property Value (R)</th><th>Rate</th></tr>
-          <tr><td>0 – 1,210,000</td><td>0%</td></tr><tr><td>1,210,001 – 1,663,800</td><td>3%</td></tr>
-          <tr><td>1,663,801 – 2,329,300</td><td>R13,614 + 6%</td></tr><tr><td>2,329,301 – 2,994,800</td><td>R53,544 + 8%</td></tr>
-          <tr><td>2,994,801 – 13,310,000</td><td>R106,784 + 11%</td></tr><tr><td>13,310,001+</td><td>R1,241,456 + 13%</td></tr></table></div>
-      <div class="ref-card"><h3>Estate &amp; Donations Tax</h3>
-        <table class="ref-table"><tr><th>Item</th><th>Rate / Amount</th></tr>
-          <tr><td>Estate duty (≤R30M)</td><td>20%</td></tr><tr><td>Estate duty (&gt;R30M)</td><td>25%</td></tr>
-          <tr><td>Basic estate deduction</td><td>R3.5M</td></tr><tr><td>Donations tax (≤R30M)</td><td>20%</td></tr>
-          <tr><td>Annual donations exemption</td><td>R150,000/yr</td></tr></table></div>
-      <div class="ref-card"><h3>2026 Budget Highlights</h3>
-        <div class="ref-highlight">
-          ✅ Bracket inflation relief applied<br>✅ Tax-free savings → <strong>R46,000/yr</strong><br>
-          ✅ VAT registration threshold → <strong>R2.3M</strong><br>
-          ⛽ Fuel levy: petrol +9c, diesel +8c/L<br>🛣 RAF levy: +7c/L both fuels<br>
-          🌿 Carbon tax: +5c petrol, +6c diesel/L<br>🍺 Excise (alcohol &amp; tobacco): +3.4%<br>
-          🎰 Online gambling tax: consultation 2026
-        </div></div>
-      <div class="ref-card"><h3>SARS Interest Rates (Mar 2026)</h3>
-        <table class="ref-table"><tr><th>Category</th><th>Rate p.a.</th></tr>
-          <tr><td>Official rate (fringe loans)</td><td>7.75%</td></tr><tr><td>Late/underpayment</td><td>10.25%</td></tr>
-          <tr><td>Overpayment refund</td><td>6.25%</td></tr><tr><td>VAT refund (after period)</td><td>10.25%</td></tr></table></div>
+<!-- ══════════════════════════════════════
+     TAX APP
+══════════════════════════════════════ -->
+<div class="app" id="app-tx">
+
+  <div class="tx-header">
+    <div class="tx-logo-mark">SA</div>
+    <div>
+      <div class="tx-logo-text">SA Tax Advisor — 2026/27</div>
+      <div class="tx-logo-sub">SARS Budget 2026 · Income Tax Act · Legal optimisation</div>
+    </div>
+    <div class="tx-hdr-right">
+      <div id="tx-key-badge" class="tx-key-badge unset" onclick="document.getElementById('keyModal').classList.add('active')" style="cursor:pointer">⚠ No Key</div>
+    </div>
+  </div>
+
+  <div class="tx-tabs">
+    <div class="tx-tab active" onclick="switchTxTab('chat',this)">💬 Advisor Chat</div>
+    <div class="tx-tab" onclick="switchTxTab('calc',this)">🧮 Tax Calculator</div>
+    <div class="tx-tab" onclick="switchTxTab('ref',this)">📋 Reference</div>
+  </div>
+
+  <!-- TX CHAT -->
+  <div class="tx-panel active" id="tx-panel-chat">
+    <div class="tx-chips">
+      <div class="tx-chip" onclick="txAsk('How can I legally reduce my taxable income this year?')">💡 Reduce Tax</div>
+      <div class="tx-chip" onclick="txAsk('What are the 2026/27 income tax brackets?')">📊 Brackets</div>
+      <div class="tx-chip" onclick="txAsk('Explain the retirement fund contribution deduction strategy for 2026/27')">🏦 Retirement</div>
+      <div class="tx-chip" onclick="txAsk('How does the Two-Pot retirement system work?')">🏺 Two-Pot</div>
+      <div class="tx-chip" onclick="txAsk('What are capital gains tax rates and key exclusions?')">📈 CGT</div>
+      <div class="tx-chip" onclick="txAsk('Do I qualify as a Small Business Corporation?')">🏢 SBC</div>
+      <div class="tx-chip" onclick="txAsk('What changed in the 2026 budget for individual taxpayers?')">⚡ Budget Changes</div>
+    </div>
+    <div id="tx-messages">
+      <div class="tx-msg ai">
+        <div class="tx-av ai">SA</div>
+        <div class="tx-bub ai">
+          <h3>SA Tax Advisor — 2026/27</h3>
+          Good day. I'm your South African tax efficiency advisor, loaded with the full <strong>SARS Budget 2026 Tax Guide</strong> and <strong>SARS General Guide to Taxation in South Africa</strong>.<br><br>
+          Tell me your situation and I'll find your highest-impact legal tax saving strategies with actual rand calculations. Sources cited in every response.
+          <div class="tx-disc">⚖️ Legal optimisation only. Not a substitute for a registered SARS Tax Practitioner.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tx-input-area">
+      <textarea id="tx-input" placeholder="Describe your situation or ask a tax question…" rows="1" onkeydown="txKey(event)" oninput="resize(this)"></textarea>
+      <button id="tx-send" onclick="txSend()">➤</button>
+    </div>
+    <div class="tx-footer">2026/27 SARS DATA · SOURCES CITED · LEGAL OPTIMISATION ONLY · NOT REGISTERED TAX ADVICE</div>
+  </div>
+
+  <!-- TX CALC -->
+  <div class="tx-panel" id="tx-panel-calc">
+    <div class="tx-calc-panel">
+      <div class="tx-calc-sec">
+        <h2>Your Tax Profile — 2026/27</h2>
+        <div class="field-grid">
+          <div class="field"><label>Annual Gross Income (R)</label><input type="number" id="ci" placeholder="e.g. 650 000" min="0"></div>
+          <div class="field"><label>Age Group</label><select id="ca"><option value="u65">Under 65</option><option value="65">65–74</option><option value="75">75+</option></select></div>
+          <div class="field"><label>Medical Aid Members</label><input type="number" id="cm" value="1" min="0" max="20"></div>
+          <div class="field"><label>Retirement Contributions (R)</label><input type="number" id="cr" placeholder="e.g. 0" min="0"></div>
+          <div class="field"><label>Tax-Free Savings (R)</label><input type="number" id="ct" placeholder="max R46 000" min="0"></div>
+          <div class="field"><label>Taxpayer Type</label><select id="ctype"><option value="emp">Salaried Employee</option><option value="prov">Provisional / Freelancer</option><option value="sbc">Small Business Owner</option></select></div>
+        </div>
+        <button class="tx-calc-btn" onclick="calcTax()">Calculate Tax &amp; Show Strategies →</button>
+      </div>
+      <div class="tx-calc-sec" id="calcOut" style="display:none">
+        <h2>Your 2026/27 Tax Assessment</h2>
+        <div id="calcRows"></div>
+        <div id="calcStrats" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TX REF -->
+  <div class="tx-panel" id="tx-panel-ref">
+    <div class="tx-ref-panel">
+      <div class="tx-ref-grid">
+        <div class="tx-ref-card"><h3>Income Tax Brackets 2026/27</h3><table class="ref-table"><tr><th>Taxable Income (R)</th><th>Rate</th></tr><tr><td>1–245,100</td><td>18%</td></tr><tr><td>245,101–383,100</td><td>26%+R44,118</td></tr><tr><td>383,101–530,200</td><td>31%+R79,998</td></tr><tr><td>530,201–695,800</td><td>36%+R125,599</td></tr><tr><td>695,801–887,000</td><td>39%+R185,215</td></tr><tr><td>887,001–1,878,600</td><td>41%+R259,783</td></tr><tr><td>1,878,601+</td><td>45%+R666,339</td></tr></table><div class="ref-note">Rebates: Primary <strong>R17,820</strong> · Secondary (65+) <strong>R9,765</strong> · Tertiary (75+) <strong>R3,249</strong></div></div>
+        <div class="tx-ref-card"><h3>Key Limits</h3><table class="ref-table"><tr><th>Item</th><th>Amount</th></tr><tr><td>Tax threshold (u65)</td><td>R99,000</td></tr><tr><td>Tax threshold (65–74)</td><td>R153,250</td></tr><tr><td>Tax threshold (75+)</td><td>R171,300</td></tr><tr><td>Tax-free savings/yr</td><td>R46,000</td></tr><tr><td>Retirement deduction cap</td><td>R430,000</td></tr><tr><td>Retirement deduction %</td><td>27.5%</td></tr><tr><td>Interest exempt (u65)</td><td>R23,800</td></tr><tr><td>Interest exempt (65+)</td><td>R34,500</td></tr><tr><td>CGT annual exclusion</td><td>R50,000</td></tr></table></div>
+        <div class="tx-ref-card"><h3>SBC Tax Rates</h3><table class="ref-table"><tr><th>Taxable Income</th><th>Rate</th></tr><tr><td>1–99,000</td><td>0%</td></tr><tr><td>99,001–365,000</td><td>7%</td></tr><tr><td>365,001–550,000</td><td>R18,620+21%</td></tr><tr><td>550,001+</td><td>R57,470+27%</td></tr></table><div class="ref-note">Requires: <strong>natural person shareholders</strong>, gross income ≤R20M, no other company shareholdings.</div></div>
+        <div class="tx-ref-card"><h3>Medical Aid Credits</h3><table class="ref-table"><tr><th>Beneficiaries</th><th>Monthly</th></tr><tr><td>First 2 (each)</td><td>R376</td></tr><tr><td>Each additional</td><td>R254</td></tr></table><div class="ref-note">Under 65: 25% additional credit above <strong>7.5% of taxable income</strong>.<br>65+ or disability: <strong>33.3%</strong>, no 7.5% floor.</div></div>
+        <div class="tx-ref-card"><h3>CGT Effective Rates</h3><table class="ref-table"><tr><th>Taxpayer</th><th>Max Rate</th></tr><tr><td>Individuals</td><td>18%</td></tr><tr><td>Companies</td><td>21.6%</td></tr><tr><td>Other trusts</td><td>36%</td></tr></table><div class="ref-note">Small biz exclusion: <strong>R2.7M</strong> (age 55+, ≤R15M). Death exclusion: <strong>R440,000</strong>.</div></div>
+        <div class="tx-ref-card"><h3>2026 Budget Highlights</h3><div class="ref-note">✅ Bracket inflation relief<br>✅ Tax-free savings → <strong>R46,000/yr</strong><br>✅ VAT registration → <strong>R2.3M</strong><br>⛽ Fuel levy: +9c petrol, +8c diesel<br>🛣 RAF levy: +7c/L both<br>🌿 Carbon tax: +5c petrol, +6c diesel<br>🍺 Excise: +3.4%</div></div>
+        <div class="tx-ref-card"><h3>Transfer Duty</h3><table class="ref-table"><tr><th>Value (R)</th><th>Rate</th></tr><tr><td>0–1,210,000</td><td>0%</td></tr><tr><td>–1,663,800</td><td>3%</td></tr><tr><td>–2,329,300</td><td>R13,614+6%</td></tr><tr><td>–2,994,800</td><td>R53,544+8%</td></tr><tr><td>–13,310,000</td><td>R106,784+11%</td></tr><tr><td>13,310,001+</td><td>R1,241,456+13%</td></tr></table></div>
+        <div class="tx-ref-card"><h3>SARS Interest Rates</h3><table class="ref-table"><tr><th>Category</th><th>Rate p.a.</th></tr><tr><td>Official rate</td><td>7.75%</td></tr><tr><td>Late payment</td><td>10.25%</td></tr><tr><td>Overpayment refund</td><td>6.25%</td></tr></table></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// ═══ STATE ═══
+// ══ STATE ══
 let apiKey = '';
-let conversationHistory = [];
+let dmHistory = [];
+let txHistory = [];
 
-// ═══ KEY MANAGEMENT ═══
+// ══ KEY ══
 function saveKey() {
-  const k = document.getElementById('apiKeyInput').value.trim();
+  const k = document.getElementById('keyInput').value.trim();
   if (!k) { alert('Please paste your API key.'); return; }
-  if (!k.startsWith('sk-ant-')) { alert('That doesn\'t look like a valid Anthropic key. It should start with sk-ant-'); return; }
+  if (!k.startsWith('sk-ant-')) { alert('Should start with sk-ant-'); return; }
   apiKey = k;
-  document.getElementById('keyStatusBadge').textContent = '✓ API Key Set';
-  document.getElementById('keyStatusBadge').className = 'key-status set';
-  document.getElementById('keyModal').classList.remove('active');
-}
-function closeKeyModal() {
+  ['dm','tx'].forEach(p => {
+    document.getElementById(p+'-key-badge').textContent = '✓ Key Active';
+    document.getElementById(p+'-key-badge').className = p+'-key-badge set';
+  });
   document.getElementById('keyModal').classList.remove('active');
 }
 
-// ═══ TABS ═══
-function switchTab(id, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+// ══ APP SWITCHER ══
+function switchApp(id, el) {
+  document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('app-'+id).classList.add('active');
 }
 
-// ═══ SYSTEM PROMPT ═══
-const SYSTEM_PROMPT = `You are a senior South African tax efficiency advisor with 20+ years of experience. You specialise in LEGAL tax optimisation — finding every legitimate deduction, credit, exemption, and structure within South African law.
+// ══ DM TABS ══
+function switchDmTab(id, el) {
+  document.querySelectorAll('.dm-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dm-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('dm-panel-'+id).classList.add('active');
+}
 
-You have full knowledge of the SARS Budget 2026 Tax Guide and the SARS General Guide to Taxation in South Africa, covering the 2026/27 tax year.
+// ══ TX TABS ══
+function switchTxTab(id, el) {
+  document.querySelectorAll('.tx-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tx-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tx-panel-'+id).classList.add('active');
+}
 
-=== 2026/27 TAX RATES ===
-INDIVIDUAL BRACKETS: R1–245,100: 18% | R245,101–383,100: R44,118+26% | R383,101–530,200: R79,998+31% | R530,201–695,800: R125,599+36% | R695,801–887,000: R185,215+39% | R887,001–1,878,600: R259,783+41% | R1,878,601+: R666,339+45%
-REBATES: Primary R17,820 | Secondary (65+) R9,765 | Tertiary (75+) R3,249
-THRESHOLDS: Under 65 R99,000 | 65–74 R153,250 | 75+ R171,300
-COMPANIES: 27% | SBC: 0% to R99k / 7% to R365k / 21% to R550k / 27% above (gross income ≤ R20M, natural person shareholders only, no other company shareholdings)
-MICRO BUSINESS: 0% to R600k / 1% to R950k / 2% to R1.4M / 3% above
+// ══ SHARED API CALL ══
+async function callAPI(messages, system) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,system,messages})
+  });
+  return await res.json();
+}
 
-=== KEY DEDUCTIONS ===
-Retirement: 27.5% of greater of remuneration or taxable income, capped R430,000. Unused carries forward. #1 TOOL.
-Tax-free savings: R46,000/yr. All growth 100% tax-free.
-Donations to PBOs: Up to 10% of taxable income (s.18A).
-Interest exempt: R23,800 (under 65) / R34,500 (65+).
+// ══ DM SYSTEM PROMPT ══
+const DM_PROMPT = `You are a Social Arbitrage investment advisor with 30+ years of trading experience, built entirely on Chris Camillo's Dumb Money Live methodology. You speak exactly like Chris Camillo — direct, passionate, energetic, unconventional, always focused on information imbalances ahead of Wall Street.
 
-=== MEDICAL AID CREDITS ===
-Monthly: R376 each for first 2 beneficiaries; R254 each additional.
-Under 65 additional: 25% of [qualifying expenses + contributions exceeding 4× monthly credits] above 7.5% of taxable income.
-65+ or disability: 33.3% — NO 7.5% floor.
+CORE IDENTITY: You turned $20,000 into over $60 million not through financial analysis, but through observing the real world. You created Social Arbitrage — exploiting the gap between what everyday people know and what Wall Street has priced in. Featured in Jack Schwager's "Unknown Market Wizards". Co-host of Dumb Money Live with Dave Hanson and Jordan McLain.
 
-=== CGT ===
-Max effective: Individuals 18% | Companies 21.6% | Trusts 36%.
-Exclusions: primary residence R3M | annual R50,000 | death R440,000 | small biz R2.7M (55+, ≤R15M value).
+THE RULES:
+1. BUY the information imbalance. SELL when Wall Street catches up and it hits mainstream media.
+2. ZERO financial literacy required. Ignore earnings, P/E, analyst reports — all backward-looking noise.
+3. Regular people have a massive edge over institutions — you shop, scroll TikTok, live in the real world.
+4. Only needle movers — trends that will materially impact a company's bottom line at scale.
+5. NEVER use stop losses. Your exit signal is a change in the social narrative, not price.
+6. Concentrate when convicted. Diversification is for people who don't know something.
+7. Sell into mainstream coverage. CNBC running your story = your exit, not your entry.
+8. Hunt on TikTok, Reddit, Instagram, school playgrounds, malls, your own purchase behaviour.
 
-=== SBC (section 12E) ===
-All shareholders must be natural persons. No shareholder may hold equity in other companies (limited exceptions). Gross income ≤ R20M. ≤20% investment/personal service income. 3+ full-time employees if personal services.
+SPEAKING STYLE: Talk like Chris on a live stream — energetic, direct, no Wall Street fluff. Say things like "here's the thing", "look", "the play here is", "Wall Street is asleep on this". Use "social arb signal", "information imbalance", "ahead of the Street", "the narrative hasn't hit yet".
 
-=== TWO-POT (from 1 Sep 2024) ===
-Savings Component: once/year, min R2k, taxed at MARGINAL rates.
-Retirement Component: preserved, first R550k at 0% on retirement.
-Key: use savings component only for emergencies — marginal tax applies, not lump sum tables.
+CURRENT MEGATRENDS (2025-2026): Humanoid Robotics (Tesla Optimus, Figure AI, 1X), AI Infrastructure (power/cooling/data layer), Gen Z consumer behaviour shifts.
 
-=== GAAR (s.80A–80L) ===
-SARS disallows: sole/main purpose = tax benefit AND lacks commercial substance OR uses abnormal means OR abuses the Act.
-Safe zone: genuine business purpose + documented commercial rationale.
+ALWAYS end with: "⚠️ Not a buy signal. Frame of reference only — do your own work, observe the world, make your own calls."`;
 
-=== ETI ===
-Reduces PAYE for employers hiring workers aged 18–29. Valid to 28 Feb 2029. Max 24 months per employee. Up to R1,500/month PAYE reduction per qualifying employee.
+// ══ TX SYSTEM PROMPT ══
+const TX_PROMPT = `You are a senior South African tax efficiency advisor with 20+ years of experience specialising in LEGAL tax optimisation within South African law. You have full knowledge of the SARS Budget 2026 Tax Guide and the SARS General Guide to Taxation in South Africa, covering 2026/27 (1 March 2026 – 28 February 2027).
 
-=== RESIDENCE ===
-Ordinarily resident: where your real home is.
-Physical presence: 91 days current year + 91 days each of 5 preceding years + 915 days in those 5 years.
-Residents: worldwide income. Foreign tax credits available.
+2026/27 BRACKETS: R1–245,100: 18% | R245,101–383,100: R44,118+26% | R383,101–530,200: R79,998+31% | R530,201–695,800: R125,599+36% | R695,801–887,000: R185,215+39% | R887,001–1,878,600: R259,783+41% | R1,878,601+: R666,339+45%
+REBATES: Primary R17,820 | Secondary R9,765 | Tertiary R3,249
+THRESHOLDS: U65 R99,000 | 65–74 R153,250 | 75+ R171,300
+COMPANIES: 27% | SBC: 0%/7%/21%/27% | MICRO: 0% to R600k then 1%/2%/3%
 
-=== OTHER RATES ===
-Dividends withholding: 20% | Royalties/interest non-residents: 15% | STT: 0.25% | VAT: 15% | Official rate: 7.75% | Late payment: 10.25%.
+KEY DEDUCTIONS: Retirement 27.5% capped R430,000 (carry forward unused — #1 tool). Tax-free savings R46,000/yr (all returns tax-free). Donations to PBOs 10% of taxable income.
+INTEREST EXEMPT: R23,800 (u65) / R34,500 (65+).
+MEDICAL CREDITS: R376/month each for first 2; R254 each additional. Additional credit: 25% (u65, above 7.5% floor) or 33.3% (65+ or disability, no floor).
+CGT: Individuals 18% max effective. Primary residence R3M exclusion. Annual R50,000. Death R440,000. SBC R2.7M (55+, ≤R15M business).
+SBC (s.12E): Natural person shareholders, gross income ≤R20M, no other company shareholdings.
+TWO-POT: Savings component taxed at marginal rates. Retirement component first R550k at 0%.
+GAAR: Arrangements with genuine commercial purpose and substance are protected. Document business purpose.
 
-=== ADVISORY STYLE ===
-Always calculate actual rand amounts when income is given. Rank strategies by financial impact. Cite sources: [Budget 2026 Tax Guide] or [Income Tax Act s.XX] or [Taxation in SA Guide]. End with disclaimer: "⚖️ Sources: [cited]. Consult a registered SARS Tax Practitioner before implementing." Never suggest anything illegal.`;
+STYLE: Calculate actual rand amounts. Rank strategies by impact. Cite sources. End with: "⚖️ Consult a registered SARS Tax Practitioner before implementing."`;
 
-// ═══ CHAT ═══
-async function sendMessage() {
-  if (!apiKey) {
-    document.getElementById('keyModal').classList.add('active');
-    return;
-  }
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  appendMessage('user', text);
-  input.value = ''; input.style.height = '42px';
-  document.getElementById('sendBtn').disabled = true;
-  conversationHistory.push({ role: 'user', content: text });
-
-  const typingId = showTyping();
+// ══ DM CHAT ══
+async function dmSend() {
+  if (!apiKey) { document.getElementById('keyModal').classList.add('active'); return; }
+  const inp = document.getElementById('dm-input');
+  const text = inp.value.trim(); if (!text) return;
+  dmAppend('user', text); inp.value=''; inp.style.height='40px';
+  document.getElementById('dm-send').disabled = true;
+  dmHistory.push({role:'user',content:text});
+  const tid = dmTyping();
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: conversationHistory
-      })
-    });
-    const data = await response.json();
-    removeTyping(typingId);
-    if (data.error) {
-      appendMessage('ai', `⚠️ API Error: ${data.error.message}. Please check your API key in Settings.`);
-      conversationHistory.pop();
-    } else {
-      const reply = data.content?.[0]?.text || 'No response generated.';
-      conversationHistory.push({ role: 'assistant', content: reply });
-      appendMessage('ai', reply);
-    }
-  } catch (err) {
-    removeTyping(typingId);
-    appendMessage('ai', '⚠️ Network error. Check your connection and try again.');
-    conversationHistory.pop();
-  }
-  document.getElementById('sendBtn').disabled = false;
+    const data = await callAPI(dmHistory, DM_PROMPT);
+    removeTyping(tid);
+    if (data.error) { dmAppend('ai','⚠️ '+data.error.message); dmHistory.pop(); }
+    else { const r=data.content?.[0]?.text||''; dmHistory.push({role:'assistant',content:r}); dmAppend('ai',r); }
+  } catch(e) { removeTyping(tid); dmAppend('ai','⚠️ Network error.'); dmHistory.pop(); }
+  document.getElementById('dm-send').disabled = false;
+}
+function dmAppend(role, text) {
+  const box = document.getElementById('dm-messages');
+  const row = document.createElement('div'); row.className='dm-msg '+role;
+  const av = document.createElement('div'); av.className='dm-av '+role; av.textContent=role==='ai'?'💸':'👤';
+  const bub = document.createElement('div'); bub.className='dm-bub '+role; bub.innerHTML=fmtDm(text);
+  row.appendChild(av); row.appendChild(bub); box.appendChild(row); box.scrollTop=box.scrollHeight;
+}
+function fmtDm(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h3>$1</h3>').replace(/^[-•] (.+)$/gm,'<li>$1</li>').replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>').replace(/<\/ul>\s*<ul>/g,'').replace(/⚠️/g,'<br><br><span style="color:var(--dm-amber)">⚠️</span>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
+function dmTyping(){const b=document.getElementById('dm-messages');const r=document.createElement('div');const id='t'+Date.now();r.id=id;r.className='dm-msg ai';r.innerHTML=`<div class="dm-av ai">💸</div><div class="dm-bub ai"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;b.appendChild(r);b.scrollTop=b.scrollHeight;return id;}
+function dmAsk(q){document.getElementById('dm-input').value=q;dmSend();}
+function dmKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();dmSend();}}
+
+// ══ TX CHAT ══
+async function txSend() {
+  if (!apiKey) { document.getElementById('keyModal').classList.add('active'); return; }
+  const inp = document.getElementById('tx-input');
+  const text = inp.value.trim(); if (!text) return;
+  txAppend('user', text); inp.value=''; inp.style.height='40px';
+  document.getElementById('tx-send').disabled = true;
+  txHistory.push({role:'user',content:text});
+  const tid = txTyping();
+  try {
+    const data = await callAPI(txHistory, TX_PROMPT);
+    removeTyping(tid);
+    if (data.error) { txAppend('ai','⚠️ '+data.error.message); txHistory.pop(); }
+    else { const r=data.content?.[0]?.text||''; txHistory.push({role:'assistant',content:r}); txAppend('ai',r); }
+  } catch(e) { removeTyping(tid); txAppend('ai','⚠️ Network error.'); txHistory.pop(); }
+  document.getElementById('tx-send').disabled = false;
+}
+function txAppend(role, text) {
+  const box = document.getElementById('tx-messages');
+  const row = document.createElement('div'); row.className='tx-msg '+role;
+  const av = document.createElement('div'); av.className='tx-av '+role; av.textContent=role==='ai'?'SA':'👤';
+  const bub = document.createElement('div'); bub.className='tx-bub '+role; bub.innerHTML=fmtTx(text);
+  row.appendChild(av); row.appendChild(bub); box.appendChild(row); box.scrollTop=box.scrollHeight;
+}
+function fmtTx(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h3>$1</h3>').replace(/\[(.+?)\]/g,'<span class="src-tag">$1</span>').replace(/^[-•] (.+)$/gm,'<li>$1</li>').replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>').replace(/<\/ul>\s*<ul>/g,'').replace(/⚖️/g,'<br><br>⚖️').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
+function txTyping(){const b=document.getElementById('tx-messages');const r=document.createElement('div');const id='t'+Date.now();r.id=id;r.className='tx-msg ai';r.innerHTML=`<div class="tx-av ai">SA</div><div class="tx-bub ai"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;b.appendChild(r);b.scrollTop=b.scrollHeight;return id;}
+function txAsk(q){document.getElementById('tx-input').value=q;txSend();}
+function txKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();txSend();}}
+
+// ══ SHARED ══
+function removeTyping(id){const el=document.getElementById(id);if(el)el.remove();}
+function resize(el){el.style.height='40px';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+// ══ DEEP DIVE ══
+async function runDive() {
+  if (!apiKey) { document.getElementById('keyModal').classList.add('active'); return; }
+  const ticker = document.getElementById('tickerIn').value.trim().toUpperCase();
+  if (!ticker) { alert('Enter a ticker symbol.'); return; }
+  const res = document.getElementById('diveResult');
+  res.style.display='block';
+  res.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:16px;color:var(--dm-dim);font-size:12px"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Running Social Arb Deep Dive on ${ticker}...</div>`;
+  document.getElementById('diveBtn').disabled=true;
+  const prompt=`Run a full Social Arbitrage Deep Dive on ${ticker}. Use EXACTLY these headers:\nSOCIAL ARB SCORE: [X/10] — why\nWALL STREET AWARENESS: [Early/Mid/Late/Priced In] — why\nINFORMATION IMBALANCE: what hasn't been priced in\nBULL CASE: 4-5 bullet points\nBEAR CASE: 4-5 bullet points\nWHAT TO WATCH: 3-4 specific signals/platforms\nCAMILLO VERDICT: honest 3-4 sentence assessment\nEnd with the standard disclaimer.`;
+  try {
+    const data = await callAPI([{role:'user',content:prompt}], DM_PROMPT);
+    document.getElementById('diveBtn').disabled=false;
+    if (data.error){res.innerHTML=`<p style="color:var(--dm-red)">Error: ${data.error.message}</p>`;return;}
+    res.innerHTML = renderDive(ticker, data.content?.[0]?.text||'');
+  } catch(e){document.getElementById('diveBtn').disabled=false;res.innerHTML=`<p style="color:var(--dm-red)">Network error.</p>`;}
+}
+function renderDive(ticker, text) {
+  const get=(label)=>{const rx=new RegExp(label+':?\\s*([\\s\\S]*?)(?=\\n[A-Z ]+:|$)','i');const m=text.match(rx);return m?m[1].trim():'';}
+  const score=get('SOCIAL ARB SCORE'),awareness=get('WALL STREET AWARENESS'),imbalance=get('INFORMATION IMBALANCE'),bull=get('BULL CASE'),bear=get('BEAR CASE'),watch=get('WHAT TO WATCH'),verdict=get('CAMILLO VERDICT');
+  const sn=parseInt((score.match(/(\d+)\/10/)||[])[1]||5);
+  const sc=sn>=7?'var(--dm-green)':sn>=4?'var(--dm-amber)':'var(--dm-red)';
+  const bullets=(t)=>t.replace(/^[-•*]\s*/gm,'').split('\n').filter(l=>l.trim()).map(l=>`<li style="margin-bottom:3px">${l.trim()}</li>`).join('');
+  return`<div style="margin-bottom:12px"><div style="font-size:20px;font-weight:bold;color:var(--dm-green);font-family:'Courier New',monospace;letter-spacing:.1em">${ticker}</div><div style="font-size:10px;color:var(--dm-dim);letter-spacing:.06em;text-transform:uppercase;margin-top:2px">Social Arb Deep Dive</div></div>
+  <div class="gap-grid"><div class="gap-card"><div class="val" style="color:${sc}">${sn}/10</div><div class="lbl">Arb Score</div></div><div class="gap-card"><div class="val" style="color:var(--dm-blue);font-size:11px">${awareness.split('—')[0].replace(/[\[\]]/g,'').trim()}</div><div class="lbl">Wall St Awareness</div></div><div class="gap-card"><div class="val" style="color:var(--dm-amber);font-size:11px">DO WORK</div><div class="lbl">Your Job</div></div></div>
+  ${imbalance?`<div style="background:var(--dm-blue-dim);border:1px solid rgba(30,144,255,.2);border-radius:var(--radius-sm);padding:11px 13px;margin:10px 0;font-size:12px;color:var(--dm-mid);line-height:1.6"><span style="color:var(--dm-blue);font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px">⚡ Information Imbalance</span>${imbalance}</div>`:''}
+  <div class="case-grid"><div class="bull-case"><div class="case-title">🟢 Bull Case</div><div class="case-body"><ul style="padding-left:13px">${bullets(bull)}</ul></div></div><div class="bear-case"><div class="case-title">🔴 Bear Case</div><div class="case-body"><ul style="padding-left:13px">${bullets(bear)}</ul></div></div></div>
+  ${watch?`<div style="background:var(--dm-amber-dim);border:1px solid rgba(255,165,2,.2);border-radius:var(--radius-sm);padding:11px 13px;margin:10px 0"><span style="color:var(--dm-amber);font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px">📡 What To Watch</span><div style="font-size:12px;color:var(--dm-mid);line-height:1.7"><ul style="padding-left:13px">${bullets(watch)}</ul></div></div>`:''}
+  ${verdict?`<div style="background:var(--dm-green-dim);border:1px solid var(--dm-green-b);border-radius:var(--radius-sm);padding:13px;margin-top:10px"><span style="color:var(--dm-green);font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:7px">💸 Camillo Verdict</span><div style="font-size:12.5px;color:var(--dm-text);line-height:1.7">${verdict}</div></div>`:''}
+  <div style="margin-top:10px;padding:7px 11px;background:rgba(255,165,2,.07);border-left:3px solid var(--dm-amber);border-radius:4px;font-size:11px;color:var(--dm-dim);line-height:1.5">⚠️ Not a buy signal. Frame of reference only. Do your own work.</div>`;
 }
 
-function appendMessage(role, text) {
-  const msgs = document.getElementById('messages');
-  const row = document.createElement('div');
-  row.className = `msg-row ${role}`;
-  const av = document.createElement('div');
-  av.className = `avatar ${role}`;
-  av.textContent = role === 'ai' ? 'SA' : '👤';
-  const bub = document.createElement('div');
-  bub.className = `bubble ${role}`;
-  bub.innerHTML = formatMsg(text);
-  row.appendChild(av); row.appendChild(bub);
-  msgs.appendChild(row);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function formatMsg(t) {
-  return t
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,'<h3>$1</h3>')
-    .replace(/\[(.+?)\]/g,'<span class="source-tag">$1</span>')
-    .replace(/^[-•] (.+)$/gm,'<li>$1</li>')
-    .replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>')
-    .replace(/<\/ul>\s*<ul>/g,'')
-    .replace(/⚖️/g,'<br><br>⚖️')
-    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
-}
-
-function showTyping() {
-  const msgs = document.getElementById('messages');
-  const row = document.createElement('div');
-  const id = 'typing-' + Date.now();
-  row.id = id; row.className = 'msg-row ai';
-  row.innerHTML = `<div class="avatar ai">SA</div><div class="bubble ai"><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-  msgs.appendChild(row); msgs.scrollTop = msgs.scrollHeight;
-  return id;
-}
-function removeTyping(id) { const el = document.getElementById(id); if(el) el.remove(); }
-function askChip(q) { document.getElementById('userInput').value = q; sendMessage(); }
-function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
-function autoResize(el) { el.style.height='42px'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
-
-// ═══ CALCULATOR ═══
-function fmt(n){return'R'+Math.round(n).toLocaleString('en-ZA')}
-function calcTax(t){
-  if(t<=245100)return t*.18;if(t<=383100)return 44118+(t-245100)*.26;
-  if(t<=530200)return 79998+(t-383100)*.31;if(t<=695800)return 125599+(t-530200)*.36;
-  if(t<=887000)return 185215+(t-695800)*.39;if(t<=1878600)return 259783+(t-887000)*.41;
-  return 666339+(t-1878600)*.45;
-}
-function marginalRate(t){
-  if(t<=245100)return.18;if(t<=383100)return.26;if(t<=530200)return.31;
-  if(t<=695800)return.36;if(t<=887000)return.39;if(t<=1878600)return.41;return.45;
-}
-function getRebate(age){let r=17820;if(age==='65to74'||age==='75plus')r+=9765;if(age==='75plus')r+=3249;return r;}
-function getMedCredit(m){m=parseInt(m)||1;return(Math.min(m,2)*376+Math.max(0,m-2)*254)*12;}
-
-function calculateTax(){
-  const income=parseFloat(document.getElementById('c_income').value)||0;
-  const age=document.getElementById('c_age').value;
-  const members=parseInt(document.getElementById('c_medical').value)||1;
-  const retCont=parseFloat(document.getElementById('c_ret').value)||0;
-  const tfsa=parseFloat(document.getElementById('c_tfsa').value)||0;
-  const type=document.getElementById('c_type').value;
-  if(!income){alert('Please enter your annual gross income.');return;}
-
-  const maxRet=Math.min(430000,income*.275);
-  const actualRet=Math.min(retCont,maxRet);
-  const taxable=Math.max(0,income-actualRet);
-  const grossTax=calcTax(taxable);
-  const rebate=getRebate(age);
-  const medCredit=getMedCredit(members);
-  const netTax=Math.max(0,grossTax-rebate-medCredit);
-  const effRate=income>0?(netTax/income*100).toFixed(1):0;
-  const marginal=marginalRate(taxable);
-  const remainingRet=maxRet-actualRet;
-  const retSaving=remainingRet*marginal;
-  const tfsaRoom=Math.max(0,46000-tfsa);
-
-  document.getElementById('resultRows').innerHTML=`
-    <div class="result-row"><span class="result-label">Gross Income</span><span class="result-value">${fmt(income)}</span></div>
-    <div class="result-row"><span class="result-label">Retirement Deduction</span><span class="result-value">${fmt(actualRet)}</span></div>
-    <div class="result-row"><span class="result-label">Taxable Income</span><span class="result-value">${fmt(taxable)}</span></div>
-    <div class="result-row"><span class="result-label">Gross Tax (before rebates)</span><span class="result-value">${fmt(grossTax)}</span></div>
-    <div class="result-row"><span class="result-label">Rebate (age-based)</span><span class="result-value green">− ${fmt(rebate)}</span></div>
-    <div class="result-row"><span class="result-label">Medical Aid Credit</span><span class="result-value green">− ${fmt(medCredit)}</span></div>
-    <div class="result-row"><span class="result-label">📌 Net Tax Payable</span><span class="result-value gold">${fmt(netTax)}</span></div>
-    <div class="result-row"><span class="result-label">Effective Tax Rate</span><span class="result-value">${effRate}%</span></div>
-    <div class="result-row"><span class="result-label">Marginal Rate</span><span class="result-value">${(marginal*100).toFixed(0)}%</span></div>`;
-
-  let cards='<h3 style="font-size:13px;color:var(--gold-light);margin-bottom:10px;font-family:Georgia,serif">Top Strategies</h3>';
-  if(remainingRet>1000)cards+=`<div class="strategy-card"><h4>🏦 1. Max Retirement Contributions</h4><p>Still <strong>${fmt(remainingRet)}</strong> available for deduction this year. At ${(marginal*100).toFixed(0)}% marginal rate:</p><div class="saving">Save up to ${fmt(retSaving)} in tax</div></div>`;
-  if(tfsaRoom>0)cards+=`<div class="strategy-card"><h4>💰 2. Fill Tax-Free Savings (R${(46000-tfsaRoom).toLocaleString()} used)</h4><p><strong>${fmt(tfsaRoom)}</strong> still available. All growth — interest, dividends, capital gains — is 100% tax-free forever.</p><div class="saving">Annual limit: R46,000 | All returns tax-free</div></div>`;
-  if(type==='sbc'||type==='provisional')cards+=`<div class="strategy-card"><h4>🏢 3. SBC Qualification Check (s.12E)</h4><p>First <strong>R99,000</strong> of company profit is tax-free under SBC vs the flat 27% corporate rate. Requirements: natural person shareholders, gross income ≤ R20M, no other company interests.</p><div class="saving">Potential saving on first R99k: up to R26,730</div></div>`;
-  if(income>400000)cards+=`<div class="strategy-card"><h4>📈 4. Annual CGT Exclusion Planning</h4><p>Realise up to <strong>R50,000</strong> in capital gains per tax year completely tax-free. For larger assets, plan disposals across multiple years to use the exclusion each time.</p><div class="saving">R50,000 in gains = zero CGT each year</div></div>`;
-  cards+=`<div class="strategy-card"><h4>🏥 5. Medical Aid Credits — ${fmt(medCredit)}/yr applied</h4><p>Out-of-pocket qualifying medical expenses generate an <strong>additional credit</strong> of ${age!=='under65'?'33.3% (no floor — you qualify for enhanced rate)':'25% of expenses above 7.5% of your taxable income'}. Keep all medical receipts.</p></div>`;
-  document.getElementById('strategyCards').innerHTML=cards;
-  document.getElementById('calcResults').style.display='block';
-  document.getElementById('calcResults').scrollIntoView({behavior:'smooth'});
+// ══ TAX CALCULATOR ══
+const fmt=n=>'R'+Math.round(n).toLocaleString('en-ZA');
+const taxBracket=t=>{if(t<=245100)return t*.18;if(t<=383100)return 44118+(t-245100)*.26;if(t<=530200)return 79998+(t-383100)*.31;if(t<=695800)return 125599+(t-530200)*.36;if(t<=887000)return 185215+(t-695800)*.39;if(t<=1878600)return 259783+(t-887000)*.41;return 666339+(t-1878600)*.45;};
+const margRate=t=>{if(t<=245100)return.18;if(t<=383100)return.26;if(t<=530200)return.31;if(t<=695800)return.36;if(t<=887000)return.39;if(t<=1878600)return.41;return.45;};
+const rebate=a=>{let r=17820;if(a==='65'||a==='75')r+=9765;if(a==='75')r+=3249;return r;};
+const medCredit=m=>{m=parseInt(m)||1;return(Math.min(m,2)*376+Math.max(0,m-2)*254)*12;};
+function calcTax(){
+  const inc=parseFloat(document.getElementById('ci').value)||0;
+  const age=document.getElementById('ca').value;
+  const mem=parseInt(document.getElementById('cm').value)||1;
+  const ret=parseFloat(document.getElementById('cr').value)||0;
+  const tfsa=parseFloat(document.getElementById('ct').value)||0;
+  const type=document.getElementById('ctype').value;
+  if(!inc){alert('Please enter your annual gross income.');return;}
+  const maxRet=Math.min(430000,inc*.275);
+  const actRet=Math.min(ret,maxRet);
+  const taxable=Math.max(0,inc-actRet);
+  const gross=taxBracket(taxable);
+  const reb=rebate(age);
+  const med=medCredit(mem);
+  const net=Math.max(0,gross-reb-med);
+  const eff=inc>0?(net/inc*100).toFixed(1):0;
+  const marg=margRate(taxable);
+  const remRet=maxRet-actRet;
+  document.getElementById('calcRows').innerHTML=`
+    <div class="result-row"><span class="rlabel">Gross Income</span><span class="rval">${fmt(inc)}</span></div>
+    <div class="result-row"><span class="rlabel">Retirement Deduction</span><span class="rval">${fmt(actRet)}</span></div>
+    <div class="result-row"><span class="rlabel">Taxable Income</span><span class="rval">${fmt(taxable)}</span></div>
+    <div class="result-row"><span class="rlabel">Gross Tax</span><span class="rval">${fmt(gross)}</span></div>
+    <div class="result-row"><span class="rlabel">Rebate</span><span class="rval green">− ${fmt(reb)}</span></div>
+    <div class="result-row"><span class="rlabel">Medical Credit</span><span class="rval green">− ${fmt(med)}</span></div>
+    <div class="result-row"><span class="rlabel">📌 Net Tax Payable</span><span class="rval gold">${fmt(net)}</span></div>
+    <div class="result-row"><span class="rlabel">Effective Rate</span><span class="rval">${eff}%</span></div>
+    <div class="result-row"><span class="rlabel">Marginal Rate</span><span class="rval">${(marg*100).toFixed(0)}%</span></div>`;
+  let s='<div style="font-size:12px;color:var(--tx-gold-l);margin-bottom:9px">Top Strategies</div>';
+  if(remRet>1000)s+=`<div class="strat-card"><h4>🏦 1. Max Retirement Contributions</h4><p>${fmt(remRet)} still available at ${(marg*100).toFixed(0)}% marginal rate.</p><div class="saving">Save up to ${fmt(remRet*marg)} in tax</div></div>`;
+  const tRoom=Math.max(0,46000-tfsa);
+  if(tRoom>0)s+=`<div class="strat-card"><h4>💰 2. Fill Tax-Free Savings (${fmt(tRoom)} remaining)</h4><p>All returns — interest, dividends, capital gains — are 100% tax-free forever.</p><div class="saving">Annual limit: R46,000</div></div>`;
+  if(type==='sbc'||type==='prov')s+=`<div class="strat-card"><h4>🏢 3. SBC Qualification (s.12E)</h4><p>First R99,000 of profit at 0% vs 27% flat corporate rate. Natural person shareholders, gross income ≤R20M.</p><div class="saving">Up to R26,730 saving on first R99k</div></div>`;
+  if(inc>400000)s+=`<div class="strat-card"><h4>📈 4. CGT Exclusion Planning</h4><p>Realise up to R50,000 in capital gains per year completely tax-free.</p><div class="saving">R50,000 annual exclusion = zero CGT</div></div>`;
+  document.getElementById('calcStrats').innerHTML=s;
+  document.getElementById('calcOut').style.display='block';
+  document.getElementById('calcOut').scrollIntoView({behavior:'smooth'});
 }
 </script>
 </body>
