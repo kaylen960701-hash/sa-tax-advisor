@@ -58,28 +58,37 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Arial',sans-serif; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
 
+/* ── BOTTOM NAV: move switcher to bottom ── */
+body > .app-switcher { order: 10; }
+body > .app { order: 1; flex: 1; }
+
 /* ═══════════════════════════════════════
    APP SWITCHER — top level
 ═══════════════════════════════════════ */
 .app-switcher {
   display: flex;
   flex-shrink: 0;
-  height: 44px;
+  height: 58px;
   z-index: 200;
+  order: 999;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 .app-tab {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 4px;
+  font-size: 10px;
   font-weight: bold;
   letter-spacing: .04em;
   cursor: pointer;
   transition: all .25s;
-  border-bottom: 3px solid transparent;
+  border-top: 3px solid transparent;
+  border-bottom: none;
   user-select: none;
+  padding-bottom: env(safe-area-inset-bottom, 4px);
 }
 .app-tab.dm {
   background: var(--dm-dark);
@@ -101,7 +110,7 @@ body { font-family:'Arial',sans-serif; height:100vh; display:flex; flex-directio
   color: var(--tx-gold-l);
   border-color: var(--tx-gold);
 }
-.app-tab .app-icon { font-size:16px; }
+.app-tab .app-icon { font-size:20px; }
 
 /* ═══ APP CONTAINERS ═══ */
 .app { display:none; flex:1; flex-direction:column; overflow:hidden; }
@@ -369,10 +378,12 @@ body { font-family:'Arial',sans-serif; height:100vh; display:flex; flex-directio
 ═══════════════════════════════════ -->
 <div class="app-switcher">
   <div class="app-tab dm active" onclick="switchApp('dm', this)">
-    <span class="app-icon">💸</span> DUMB MONEY
+    <span class="app-icon">💸</span>
+    <span>DUMB MONEY</span>
   </div>
   <div class="app-tab tx" onclick="switchApp('tx', this)">
-    <span class="app-icon">📊</span> SA TAX ADVISOR
+    <span class="app-icon">📊</span>
+    <span>SA TAX</span>
   </div>
 </div>
 
